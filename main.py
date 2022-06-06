@@ -1,4 +1,5 @@
 import os
+from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
@@ -22,6 +23,21 @@ def download_txt(url, filename, folder='books/'):
         file.write(response.content)
 
 
+def download_book_covers(url, folder='images/'):
+    response = requests.get(url)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, 'lxml')
+    book_img = soup.find('div', class_='bookimage').find('img')['src']
+    filename = book_img.split('/')[-1]
+    url_img = urljoin('https://tululu.org/', book_img)
+    response = requests.get(url_img)
+    response.raise_for_status()
+    os.makedirs(folder, exist_ok=True)
+    filepath = os.path.join(folder, filename)
+    with open(filepath, 'wb') as file:
+        file.write(response.content)
+
+
 def title_loading(url):
     response = requests.get(url)
     response.raise_for_status()
@@ -32,10 +48,12 @@ def title_loading(url):
 
 for book_number in range(1, 11):
     try:
-        url_download = f'https://tululu.org/txt.php?id={book_number}'
+        url = 'https://tululu.org/'
+        url_download_txt = f'https://tululu.org/txt.php?id={book_number}'
         url_book = f'https://tululu.org/b{book_number}/'
-        check_for_redirect(url_download)
+        check_for_redirect(url_download_txt)
         filename = f'{book_number}. {title_loading(url_book)}.txt'
-        download_txt(url_download, filename)
+        download_txt(url_download_txt, filename)
+        download_book_covers(url_book)
     except requests.exceptions.HTTPError:
         pass
