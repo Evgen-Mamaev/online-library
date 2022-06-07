@@ -46,17 +46,22 @@ def title_loading(url):
     return title_book
 
 
-def print_text_comments(url):
+def print_inf_book(url):
     response = requests.get(url)
     response.raise_for_status()
     soup = BeautifulSoup(response.text, 'lxml')
     title_book = soup.find('h1').text.split('   ::   ')[0]
     print(title_book)
     comments = []
+    genres = []
     for comment in soup.find_all('div', class_='texts'):
         text_comments = comment.find('span', class_='black')
         comments.append(text_comments.text)
-    print(*comments, sep='\n')
+    #print(*comments, sep='\n')
+    genres_soup = soup.find('span', class_='d_book').find_all('a')
+    for genre in genres_soup:
+        genres.append(genre.text)
+    print(genres)
 
 
 for book_number in range(1, 11):
@@ -68,6 +73,6 @@ for book_number in range(1, 11):
         filename = f'{book_number}. {title_loading(url_book)}.txt'
         download_txt(url_download_txt, filename)
         download_book_covers(url_book)
-        print_text_comments(url_book)
+        print_inf_book(url_book)
     except requests.exceptions.HTTPError:
         pass
