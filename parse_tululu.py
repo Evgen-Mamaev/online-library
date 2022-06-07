@@ -1,3 +1,4 @@
+import argparse
 import os
 from pprint import pprint
 from urllib.parse import urljoin
@@ -73,8 +74,21 @@ def parse_book_page(url):
     pprint(inf_book_page)
 
 
+def start_stop_download():
+    parser = argparse.ArgumentParser(
+        description='Введите номер начала и конца скачивания книг'
+    )
+    parser.add_argument('--start_id', default='0', help='Старт', type=int)
+    parser.add_argument('--end_id', default='0', help='Стоп', type=int)
+    return parser
+
+
 if __name__ == '__main__':
-    for book_number in range(1, 11):
+    parser = start_stop_download()
+    args = parser.parse_args()
+    start_download = args.start_id
+    stop_download = args.end_id
+    for book_number in range(start_download, stop_download):
         try:
             url = 'https://tululu.org/'
             url_download_txt = f'https://tululu.org/txt.php?id={book_number}'
