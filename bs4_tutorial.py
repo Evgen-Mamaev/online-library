@@ -1,7 +1,5 @@
 from urllib.parse import urljoin
-from urllib.parse import urlparse
-from urllib.parse import urlsplit
-import os
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -16,3 +14,20 @@ def title_loading(url):
     print(urljoin(url, book_img))
 
 
+
+
+def print_text_comments(url):
+    response = requests.get(url)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, 'lxml')
+    title_book = soup.find('h1').text.split('   ::   ')[0]
+    print(title_book)
+    comments = []
+    for comment in soup.find_all('div', class_='texts'):
+        text_comments = comment.find('span', class_='black')
+        comments.append(text_comments.text)
+    print(*comments, sep='\n')
+
+for book_number in range(3, 11):
+    url = f'https://tululu.org/b{book_number}/'
+    #print_text_comments(url)
