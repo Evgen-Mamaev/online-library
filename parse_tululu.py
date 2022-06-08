@@ -1,6 +1,5 @@
 import argparse
 import os
-from pprint import pprint
 from urllib.parse import urljoin
 
 import requests
@@ -71,7 +70,10 @@ def parse_book_page(url):
         'book comments': comments,
         'book genre': genres,
     }
-    pprint(inf_book_page)
+    # pprint(inf_book_page)
+    print(f"Название: {inf_book_page['name of the book']}")
+    print(f"Автор: {inf_book_page['book author']}")
+    print()
 
 
 def start_stop_download():
@@ -87,7 +89,7 @@ if __name__ == '__main__':
     parser = start_stop_download()
     args = parser.parse_args()
     start_download = args.start_id
-    stop_download = args.end_id
+    stop_download = args.end_id + 1
     for book_number in range(start_download, stop_download):
         try:
             url = 'https://tululu.org/'
