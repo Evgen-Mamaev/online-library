@@ -7,9 +7,15 @@
 Для запуска программы у вас уже должен быть установлен Python 3.
 
 - Скачайте код
-- Установите зависимости командой `pip install -r requirements.txt`
-- Запустите программу командой
-  * `parse_tululu.py --start_id=0 --end_id=0`, указав значения аргументов `--start_id` и `end_id`
+- Установите зависимости командой:
+```Python
+pip install -r requirements.txt
+```
+- Запустите программу командой:
+```Python
+parse_tululu.py --start_id=0 --end_id=0
+```
+, указав значения аргументов `--start_id` и `end_id`
 
 ## Аргументы
 
