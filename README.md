@@ -6,13 +6,9 @@
 
 Для запуска программы у вас уже должен быть установлен Python 3.
 
-- Скачате файл `parse_tululu.py`
-- Установите необходимые библиотеки
-  * `pip install requests`
-  * `pip install pathvalidate`
-  * `pip install bs4`
-  * `pip install lxml`
-- Заустите программу
+- Скачайте код
+- Установите зависимости командой `pip install -r requirements.txt`
+- Запустите программу командой
   * `parse_tululu.py --start_id=0 --end_id=0`, указав значения аргументов `--start_id` и `end_id`
 
 ## Аргументы
