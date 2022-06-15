@@ -15,7 +15,7 @@ pip install -r requirements.txt
 ```Python
 parse_tululu.py --start_id=0 --end_id=0
 ```
-, указав значения аргументов `--start_id` и `end_id`
+, указав значения аргументов `--start_id` и `--end_id`
 
 ## Аргументы
 
