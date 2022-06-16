@@ -35,14 +35,13 @@ def download_book_covers(response, folder='images/'):
 
 def title_loading(response):
     soup = BeautifulSoup(response.text, 'lxml')
-    title_book = soup.find('h1').text.split('   ::   ')[0]
+    title_book, author = soup.find('h1').text.split('   ::   ')
     return title_book
 
 
 def parse_book_page(response):
     soup = BeautifulSoup(response.text, 'lxml')
-    title_book = soup.find('h1').text.split('   ::   ')[0]
-    author = soup.find('h1').text.split('   ::   ')[1]
+    title_book, author = soup.find('h1').text.split('   ::   ')
     book_img = soup.find('div', class_='bookimage').find('img')['src']
     book_img_link = urljoin('https://tululu.org/', book_img)
     comments = []
