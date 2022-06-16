@@ -53,7 +53,6 @@ def parse_book_page(response):
         'comments': comments,
         'genres': genres,
     }
-    # pprint(inf_book_page)
     print(f"Название: {book_page['title']}")
     print(f"Автор: {book_page['author']}")
     print()
