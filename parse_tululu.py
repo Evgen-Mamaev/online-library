@@ -76,7 +76,7 @@ def parse_book_page(url):
     print()
 
 
-def start_stop_download():
+def sets_download_limits():
     parser = argparse.ArgumentParser(
         description='Введите номер начала и конца скачивания книг'
     )
@@ -86,7 +86,7 @@ def start_stop_download():
 
 
 if __name__ == '__main__':
-    parser = start_stop_download()
+    parser = sets_download_limits()
     args = parser.parse_args()
     start_download = args.start_id
     stop_download = args.end_id + 1
