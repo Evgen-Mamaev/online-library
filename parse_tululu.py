@@ -35,27 +35,27 @@ def download_book_covers(response, folder='images/'):
 
 def title_loading(response):
     soup = BeautifulSoup(response.text, 'lxml')
-    title_book, author = soup.find('h1').text.split('   ::   ')
-    return title_book
+    title_of_book, author = soup.find('h1').text.split('   ::   ')
+    return title_of_book
 
 
 def parse_book_page(response):
     soup = BeautifulSoup(response.text, 'lxml')
-    title_book, author = soup.find('h1').text.split('   ::   ')
+    title_of_book, author = soup.find('h1').text.split('   ::   ')
     book_img = soup.find('div', class_='bookimage').find('img')['src']
     book_img_link = urljoin('https://tululu.org/', book_img)
     comments = [comment.find('span', class_='black').text for comment in soup.find_all('div', class_='texts')]
     genres = [genre.text for genre in soup.find('span', class_='d_book').find_all('a')]
-    inf_book_page = {
-        'name of the book': title_book,
-        'book author': author,
-        'book cover': book_img_link,
-        'book comments': comments,
-        'book genre': genres,
+    book_page = {
+        'title': title_of_book,
+        'author': author,
+        'cover': book_img_link,
+        'comments': comments,
+        'genres': genres,
     }
     # pprint(inf_book_page)
-    print(f"Название: {inf_book_page['name of the book']}")
-    print(f"Автор: {inf_book_page['book author']}")
+    print(f"Название: {book_page['title']}")
+    print(f"Автор: {book_page['author']}")
     print()
 
 
