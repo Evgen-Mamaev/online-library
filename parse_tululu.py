@@ -7,16 +7,12 @@ from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 
 
-def check_for_redirect(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    if response.url != url:
+def check_for_redirect(response_history):
+    if response_history:
         raise requests.exceptions.HTTPError
 
 
-def download_txt(url, filename, folder='books/'):
-    response = requests.get(url)
-    response.raise_for_status()
+def download_txt(response, filename, folder='books/'):
     os.makedirs(folder, exist_ok=True)
     filename = sanitize_filename(filename)
     filepath = os.path.join(folder, filename)
@@ -24,9 +20,7 @@ def download_txt(url, filename, folder='books/'):
         file.write(response.content)
 
 
-def download_book_covers(url, folder='images/'):
-    response = requests.get(url)
-    response.raise_for_status()
+def download_book_covers(response, folder='images/'):
     soup = BeautifulSoup(response.text, 'lxml')
     book_img = soup.find('div', class_='bookimage').find('img')['src']
     filename = book_img.split('/')[-1]
@@ -39,17 +33,13 @@ def download_book_covers(url, folder='images/'):
         file.write(response.content)
 
 
-def title_loading(url):
-    response = requests.get(url)
-    response.raise_for_status()
+def title_loading(response):
     soup = BeautifulSoup(response.text, 'lxml')
     title_book = soup.find('h1').text.split('   ::   ')[0]
     return title_book
 
 
-def parse_book_page(url):
-    response = requests.get(url)
-    response.raise_for_status()
+def parse_book_page(response):
     soup = BeautifulSoup(response.text, 'lxml')
     title_book = soup.find('h1').text.split('   ::   ')[0]
     author = soup.find('h1').text.split('   ::   ')[1]
@@ -94,11 +84,17 @@ if __name__ == '__main__':
         try:
             url = 'https://tululu.org/'
             url_download_txt = f'https://tululu.org/txt.php?id={book_number}'
+            response_url_download_txt = requests.get(url_download_txt)
+            response_url_download_txt.raise_for_status()
             url_book = f'https://tululu.org/b{book_number}/'
-            check_for_redirect(url_download_txt)
-            filename = f'{book_number}. {title_loading(url_book)}.txt'
-            download_txt(url_download_txt, filename)
-            download_book_covers(url_book)
-            parse_book_page(url_book)
+            response_url_book = requests.get(url_book)
+            response_url_book.raise_for_status()
+
+            check_for_redirect(response_url_download_txt.history)
+
+            filename = f'{book_number}. {title_loading(response_url_book)}.txt'
+            download_txt(response_url_download_txt, filename)
+            download_book_covers(response_url_book)
+            parse_book_page(response_url_book)
         except requests.exceptions.HTTPError:
             pass
