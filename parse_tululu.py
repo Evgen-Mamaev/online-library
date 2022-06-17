@@ -53,9 +53,7 @@ def parse_book_page(response):
         'comments': comments,
         'genres': genres,
     }
-    print(f"Название: {book_page['title']}")
-    print(f"Автор: {book_page['author']}")
-    print()
+    return book_page
 
 
 def sets_download_limits():
@@ -87,6 +85,10 @@ if __name__ == '__main__':
             filename = f'{book_number}. {title_loading(response_url_book)}.txt'
             download_txt(response_url_download_txt, filename)
             download_book_covers(response_url_book)
-            parse_book_page(response_url_book)
+
+            book_page = parse_book_page(response_url_book)
+            print(f"Название: {book_page.get('title')}")
+            print(f"Автор: {book_page.get('author')}")
+            print()
         except requests.exceptions.HTTPError:
             pass
