@@ -20,11 +20,8 @@ def download_txt(response, filename, folder='books/'):
         file.write(response.content)
 
 
-def download_book_cover(response, folder='images/'):
-    soup = BeautifulSoup(response.text, 'lxml')
-    book_img = soup.find('div', class_='bookimage').find('img')['src']
-    filename = book_img.split('/')[-1]
-    url_img = urljoin('https://tululu.org/', book_img)
+def download_book_cover(url_img, folder='images/'):
+    filename = url_img.split('/')[-1]
     response = requests.get(url_img)
     response.raise_for_status()
     os.makedirs(folder, exist_ok=True)
@@ -78,9 +75,12 @@ if __name__ == '__main__':
             check_for_redirect(response_url_download_txt.history)
 
             book_page = parse_book_page(response_url_book)
+
             filename = f"{book_number}. {book_page.get('title')}.txt"
             download_txt(response_url_download_txt, filename)
-            download_book_cover(response_url_book)
+
+            url_img = book_page.get('cover')
+            download_book_cover(url_img)
 
             print(f"Название: {book_page.get('title')}")
             print(f"Автор: {book_page.get('author')}")
