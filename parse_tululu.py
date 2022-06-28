@@ -20,7 +20,7 @@ def download_txt(response, filename, folder='books/'):
         file.write(response.content)
 
 
-def download_book_covers(response, folder='images/'):
+def download_book_cover(response, folder='images/'):
     soup = BeautifulSoup(response.text, 'lxml')
     book_img = soup.find('div', class_='bookimage').find('img')['src']
     filename = book_img.split('/')[-1]
@@ -80,7 +80,7 @@ if __name__ == '__main__':
             book_page = parse_book_page(response_url_book)
             filename = f"{book_number}. {book_page.get('title')}.txt"
             download_txt(response_url_download_txt, filename)
-            download_book_covers(response_url_book)
+            download_book_cover(response_url_book)
 
             print(f"Название: {book_page.get('title')}")
             print(f"Автор: {book_page.get('author')}")
