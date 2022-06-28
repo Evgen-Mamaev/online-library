@@ -34,7 +34,7 @@ def parse_book_page(response):
     soup = BeautifulSoup(response.text, 'lxml')
     title_of_book, author = soup.find('h1').text.split('   ::   ')
     book_img = soup.find('div', class_='bookimage').find('img')['src']
-    book_img_link = urljoin('https://tululu.org/', book_img)
+    book_img_link = urljoin(response.url, book_img)
     comments = [comment.find('span', class_='black').text for comment in soup.find_all('div', class_='texts')]
     genres = [genre.text for genre in soup.find('span', class_='d_book').find_all('a')]
     book_page = {
@@ -63,9 +63,9 @@ if __name__ == '__main__':
     stop_download = args.end_id + 1
     for book_number in range(start_download, stop_download):
         try:
-            url = 'https://tululu.org/txt.php'
+            url_download_txt = 'https://tululu.org/txt.php'
             payload = {'id': book_number}
-            response_url_download_txt = requests.get(url, params=payload)
+            response_url_download_txt = requests.get(url_download_txt, params=payload)
             response_url_download_txt.raise_for_status()
 
             url_book = f'https://tululu.org/b{book_number}/'
