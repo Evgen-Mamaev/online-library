@@ -72,10 +72,11 @@ if __name__ == '__main__':
     stop_download = args.end_id + 1
     for book_number in range(start_download, stop_download):
         try:
-            url = 'https://tululu.org/'
-            url_download_txt = f'https://tululu.org/txt.php?id={book_number}'
-            response_url_download_txt = requests.get(url_download_txt)
+            url = 'https://tululu.org/txt.php'
+            payload = {'id': book_number}
+            response_url_download_txt = requests.get(url, params=payload)
             response_url_download_txt.raise_for_status()
+
             url_book = f'https://tululu.org/b{book_number}/'
             response_url_book = requests.get(url_book)
             response_url_book.raise_for_status()
