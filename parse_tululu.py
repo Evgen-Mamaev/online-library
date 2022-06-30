@@ -77,6 +77,7 @@ if __name__ == '__main__':
             response_url_book = requests.get(url_book)
             response_url_book.raise_for_status()
 
+            check_for_redirect(response_url_book.history)
             check_for_redirect(response_url_download_txt.history)
 
             book_page = parse_book_page(response_url_book)
