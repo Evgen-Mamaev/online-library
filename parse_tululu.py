@@ -56,6 +56,14 @@ def sets_download_limits():
     return parser
 
 
+def get_response_url_download_txt():
+    url_download_txt = 'https://tululu.org/txt.php'
+    payload = {'id': book_number}
+    response_url_download_txt = requests.get(url_download_txt, params=payload)
+    response_url_download_txt.raise_for_status()
+    return response_url_download_txt
+
+
 if __name__ == '__main__':
     parser = sets_download_limits()
     args = parser.parse_args()
@@ -63,10 +71,7 @@ if __name__ == '__main__':
     stop_download = args.end_id + 1
     for book_number in range(start_download, stop_download):
         try:
-            url_download_txt = 'https://tululu.org/txt.php'
-            payload = {'id': book_number}
-            response_url_download_txt = requests.get(url_download_txt, params=payload)
-            response_url_download_txt.raise_for_status()
+            response_url_download_txt = get_response_url_download_txt()
 
             url_book = f'https://tululu.org/b{book_number}/'
             response_url_book = requests.get(url_book)
