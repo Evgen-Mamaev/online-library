@@ -98,3 +98,7 @@ if __name__ == '__main__':
             print(f'Книга c №{book_number}, отсутствует')
             print()
             logging.info(f'Book number {book_number} is missing')
+        except requests.ConnectionError:
+            logging.basicConfig(filename='sample.log', level=logging.INFO)
+            logging.error('Connection Error')
+            print('Ошибка подключения')
