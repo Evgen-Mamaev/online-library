@@ -1,4 +1,5 @@
 import argparse
+import logging
 import os
 from urllib.parse import urljoin
 
@@ -91,5 +92,9 @@ if __name__ == '__main__':
             print(f"Название: {book_page.get('title')}")
             print(f"Автор: {book_page.get('author')}")
             print()
+            logging.basicConfig(filename='sample.log', level=logging.INFO)
+            logging.info(f'Book number {book_number} loaded')
         except requests.exceptions.HTTPError:
-            pass
+            print(f'Книга c №{book_number}, отсутствует')
+            print()
+            logging.info(f'Book number {book_number} is missing')
