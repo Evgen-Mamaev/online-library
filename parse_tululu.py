@@ -89,16 +89,10 @@ if __name__ == '__main__':
             url_img = book_page.get('cover')
             download_book_cover(url_img)
 
-            print(f"Название: {book_page.get('title')}")
-            print(f"Автор: {book_page.get('author')}")
-            print()
             logging.basicConfig(filename='sample.log', level=logging.INFO)
             logging.info(f'Book number {book_number} loaded')
         except requests.exceptions.HTTPError:
-            print(f'Книга c №{book_number}, отсутствует')
-            print()
             logging.info(f'Book number {book_number} is missing')
         except requests.ConnectionError:
             logging.basicConfig(filename='sample.log', level=logging.INFO)
             logging.error('Connection Error')
-            print('Ошибка подключения')
