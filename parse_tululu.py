@@ -1,6 +1,7 @@
 import argparse
 import logging
 import os
+import time
 from urllib.parse import urljoin
 
 import requests
@@ -100,3 +101,4 @@ if __name__ == '__main__':
             logging.basicConfig(filename='sample.log')
             logger.setLevel(logging.INFO)
             logger.error('Connection Error')
+            time.sleep(30)
