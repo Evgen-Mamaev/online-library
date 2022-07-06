@@ -7,6 +7,8 @@ import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 
+logger = logging.getLogger(__file__)
+
 
 def check_for_redirect(response_history):
     if response_history:
@@ -90,9 +92,11 @@ if __name__ == '__main__':
             download_book_cover(url_img)
 
             logging.basicConfig(filename='sample.log', level=logging.INFO)
-            logging.info(f'Book number {book_number} loaded')
+            logger.setLevel(logging.INFO)
+            logger.info(f'Book number {book_number} loaded')
         except requests.exceptions.HTTPError:
-            logging.info(f'Book number {book_number} is missing')
+            logger.info(f'Book number {book_number} is missing')
         except requests.ConnectionError:
-            logging.basicConfig(filename='sample.log', level=logging.INFO)
-            logging.error('Connection Error')
+            logging.basicConfig(filename='sample.log')
+            logger.setLevel(logging.INFO)
+            logger.error('Connection Error')
