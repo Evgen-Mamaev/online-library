@@ -69,6 +69,9 @@ def get_response_url_download_txt():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(filename='sample.log', level=logging.INFO)
+    logger.setLevel(logging.INFO)
+
     parser = sets_download_limits()
     args = parser.parse_args()
     start_download = args.start_id
@@ -92,13 +95,9 @@ if __name__ == '__main__':
             url_img = book_page.get('cover')
             download_book_cover(url_img)
 
-            logging.basicConfig(filename='sample.log', level=logging.INFO)
-            logger.setLevel(logging.INFO)
             logger.info(f'Book number {book_number} loaded')
         except requests.exceptions.HTTPError:
             logger.info(f'Book number {book_number} is missing')
         except requests.ConnectionError:
-            logging.basicConfig(filename='sample.log')
-            logger.setLevel(logging.INFO)
             logger.error('Connection Error')
             time.sleep(30)
