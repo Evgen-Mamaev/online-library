@@ -21,7 +21,7 @@ def saves_book_txt(response, filename, folder='books/'):
     filename = sanitize_filename(filename)
     filepath = os.path.join(folder, filename)
     with open(filepath, 'wb') as file:
-        file.write(response.content)
+        file.write(response.text)
 
 
 def download_book_cover(url_img, folder='images/'):
@@ -31,7 +31,7 @@ def download_book_cover(url_img, folder='images/'):
     os.makedirs(folder, exist_ok=True)
     filepath = os.path.join(folder, filename)
     with open(filepath, 'wb') as file:
-        file.write(response.text)
+        file.write(response.content)
 
 
 def parse_book_page(response):
