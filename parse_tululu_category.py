@@ -37,11 +37,11 @@ def download_book_cover(url_img, folder='images/'):
 
 def parse_book_page(response):
     soup = BeautifulSoup(response.text, 'lxml')
-    title_of_book, author = soup.find('h1').text.split('   ::   ')
-    book_img = soup.find('div', class_='bookimage').find('img')['src']
+    title_of_book, author = soup.select_one('h1').text.split('   ::   ')
+    book_img = soup.select_one('.bookimage img')['src']
     book_img_link = urljoin(response.url, book_img)
-    comments = [comment.find('span', class_='black').text for comment in soup.find_all('div', class_='texts')]
-    genres = [genre.text for genre in soup.find('span', class_='d_book').find_all('a')]
+    comments = [comment.text for comment in soup.select('.texts .black')]
+    genres = [genres.text for genres in soup.select('span.d_book a')]
     img_path = f"images/{book_img.split('/')[-1]}"
     book_page = {
         'title': title_of_book,
@@ -68,7 +68,7 @@ def get_response_url_books(number_page):
     response_url_fantasy_genre_books = requests.get(url_fantasy_genre_books)
     response_url_fantasy_genre_books.raise_for_status()
     soup = BeautifulSoup(response_url_fantasy_genre_books.text, 'lxml')
-    book_numbers = [book.find('a')['href'] for book in soup.find_all('table', class_='d_book')]
+    book_numbers = [book_number['href'] for book_number in soup.select('.bookimage a')]
     url_books = [urljoin(url_tululu, book_number) for book_number in book_numbers]
     return url_books
 
