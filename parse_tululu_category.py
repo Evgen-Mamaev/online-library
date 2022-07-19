@@ -77,8 +77,8 @@ def sets_download_pages():
     parser = argparse.ArgumentParser(
         description='Введите номер страницы начала и конца скачивания книг'
     )
-    parser.add_argument('--start_id', default='0', help='Старт', type=int)
-    parser.add_argument('--end_id', default='0', help='Стоп', type=int)
+    parser.add_argument('--start_page', default='0', help='Старт', type=int)
+    parser.add_argument('--end_page', default='702', help='Стоп', type=int)
     return parser
 
 
@@ -99,8 +99,8 @@ if __name__ == '__main__':
 
     parser = sets_download_pages()
     args = parser.parse_args()
-    download_start_page = args.start_id
-    download_stop_page = args.end_id + 1
+    download_start_page = args.start_page
+    download_stop_page = args.end_page
 
     for number_page in range(download_start_page, download_stop_page):
         url_books = get_response_url_books(number_page)
