@@ -49,7 +49,7 @@ def parse_book_page(response):
         'cover': book_img_link,
         'img_path': img_path,
         'comments': comments,
-        'genres': genres,
+        'genres': genres
     }
     return book_page
 
@@ -77,7 +77,7 @@ def sets_page_loading_options():
     parser = argparse.ArgumentParser(
         description='Введите номер страницы начала и конца скачивания книг'
     )
-    parser.add_argument('--start_page', default='0', help='Старт', type=int)
+    parser.add_argument('--start_page', default='1', help='Старт', type=int)
     parser.add_argument('--end_page', default='702', help='Стоп', type=int)
     parser.add_argument('--dest_folder', default='library', help='Укажите папку, для скаивания', type=str)
     parser.add_argument('--skip_imgs', help='Скачать обложки?', action='store_true')
