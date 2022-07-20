@@ -17,7 +17,7 @@ def check_for_redirect(response_history):
         raise requests.exceptions.HTTPError
 
 
-def saves_book_txt(response, filename, folder='books/'):
+def saves_book_txt(response, filename, folder):
     os.makedirs(folder, exist_ok=True)
     filename = sanitize_filename(filename)
     filepath = os.path.join(folder, filename)
@@ -25,7 +25,7 @@ def saves_book_txt(response, filename, folder='books/'):
         file.write(response.content)
 
 
-def download_book_cover(url_img, folder='images/'):
+def download_book_cover(url_img, folder):
     filename = url_img.split('/')[-1]
     response = requests.get(url_img)
     response.raise_for_status()
@@ -42,7 +42,7 @@ def parse_book_page(response):
     book_img_link = urljoin(response.url, book_img)
     comments = [comment.text for comment in soup.select('.texts .black')]
     genres = [genres.text for genres in soup.select('span.d_book a')]
-    img_path = f"images/{book_img.split('/')[-1]}"
+    img_path = book_img.split('/')[-1]
     book_page = {
         'title': title_of_book,
         'author': author,
@@ -73,23 +73,30 @@ def get_response_url_books(number_page):
     return url_books
 
 
-def sets_download_pages():
+def sets_page_loading_options():
     parser = argparse.ArgumentParser(
         description='Введите номер страницы начала и конца скачивания книг'
     )
     parser.add_argument('--start_page', default='0', help='Старт', type=int)
     parser.add_argument('--end_page', default='702', help='Стоп', type=int)
+    parser.add_argument('--dest_folder', default='library', help='Укажите папку, для скаивания', type=str)
+    parser.add_argument('--skip_imgs', help='Скачать обложки?', action='store_true')
+    parser.add_argument('--skip_txt', help='Скачать книги?', action='store_true')
+    parser.add_argument('--json_path', default='book_page', help='Укажите имя, для json', type=str)
     return parser
 
 
-def write_json(book_page):
+def write_json(book_page, folder, filename):
+    os.makedirs(folder, exist_ok=True)
+    filename = sanitize_filename(filename)
+    filepath = os.path.join(folder, filename)
     try:
-        with open('book_page.json', 'r', encoding='utf8') as my_file:
+        with open(filepath, 'r', encoding='utf8') as my_file:
             file = json.load(my_file)
     except:
         file = []
     file.append(book_page)
-    with open('book_page.json', 'w', encoding='utf8') as my_file:
+    with open(filepath, 'w', encoding='utf8') as my_file:
         json.dump(file, my_file, ensure_ascii=False, indent=2)
 
 
@@ -97,7 +104,7 @@ if __name__ == '__main__':
     logging.basicConfig(filename='sample.log', level=logging.INFO)
     logger.setLevel(logging.INFO)
 
-    parser = sets_download_pages()
+    parser = sets_page_loading_options()
     args = parser.parse_args()
     download_start_page = args.start_page
     download_stop_page = args.end_page
@@ -114,15 +121,27 @@ if __name__ == '__main__':
 
                 book_page = parse_book_page(response_url_book)
 
-                response_url_download_txt = get_response_url_download_txt()
-                filename = f"{book_number}. {book_page.get('title')}.txt"
-                saves_book_txt(response_url_download_txt, filename)
-                book_page['book_path'] = f'books/{filename}'
+                if not args.skip_txt:
+                    response_url_download_txt = get_response_url_download_txt()
+                    filename = f"{book_number}. {book_page.get('title')}.txt"
+                    folder = f'{args.dest_folder}/book'
+                    saves_book_txt(response_url_download_txt, filename, folder)
+                    book_page['book_path'] = f'{folder}/{filename}'
+                else:
+                    book_page['book_path'] = ' '
 
-                url_img = book_page.get('cover')
-                download_book_cover(url_img)
+                if not args.skip_imgs:
+                    url_img = book_page.get('cover')
+                    folder = f'{args.dest_folder}/images'
+                    download_book_cover(url_img, folder)
+                    book_page['img_path'] = f"{folder}/{book_page.get('img_path')}"
+                else:
+                    book_page['img_path'] = ' '
 
-                write_json(book_page)
+                folder_json = args.dest_folder
+                filename_json = f'{args.json_path}.json'
+
+                write_json(book_page, folder_json, filename_json)
 
                 logger.info(f'Book number {book_number} loaded')
             except requests.exceptions.HTTPError:
