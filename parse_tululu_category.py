@@ -25,9 +25,9 @@ def saves_book_txt(response, filename, folder):
         file.write(response.content)
 
 
-def download_book_cover(url_img, folder):
-    filename = url_img.split('/')[-1]
-    response = requests.get(url_img)
+def download_book_cover(img_url, folder):
+    filename = img_url.split('/')[-1]
+    response = requests.get(img_url)
     response.raise_for_status()
     os.makedirs(folder, exist_ok=True)
     filepath = os.path.join(folder, filename)
@@ -62,15 +62,15 @@ def get_response_url_download_txt():
     return response_url_download_txt
 
 
-def get_books_urls_answers_from_page(number_page):
-    url_tululu = 'https://tululu.org/'
-    url_fantasy_genre_books = f'https://tululu.org/l55/{number_page}'
-    response_url_fantasy_genre_books = requests.get(url_fantasy_genre_books)
-    response_url_fantasy_genre_books.raise_for_status()
-    soup = BeautifulSoup(response_url_fantasy_genre_books.text, 'lxml')
+def get_book_urls_answers_from_page(page_number):
+    tululu_url = 'https://tululu.org/'
+    fantasy_genre_book_urls = f'https://tululu.org/l55/{page_number}'
+    fantasy_genre_book_response_urls = requests.get(fantasy_genre_book_urls)
+    fantasy_genre_book_response_urls.raise_for_status()
+    soup = BeautifulSoup(fantasy_genre_book_response_urls.text, 'lxml')
     book_numbers = [book_number['href'] for book_number in soup.select('.bookimage a')]
-    url_books = [urljoin(url_tululu, book_number) for book_number in book_numbers]
-    return url_books
+    book_urls = [urljoin(tululu_url, book_number) for book_number in book_numbers]
+    return book_urls
 
 
 def sets_page_loading_options():
@@ -109,17 +109,17 @@ if __name__ == '__main__':
     download_start_page = args.start_page
     download_stop_page = args.end_page
 
-    for number_page in range(download_start_page, download_stop_page):
-        url_books = get_books_urls_answers_from_page(number_page)
-        for url_book in url_books:
-            book_number = url_book.split('/')[-2].replace('b', '')
+    for page_number in range(download_start_page, download_stop_page):
+        book_urls = get_book_urls_answers_from_page(page_number)
+        for book_url in book_urls:
+            book_number = book_url.split('/')[-2].replace('b', '')
             try:
-                response_url_book = requests.get(url_book)
-                response_url_book.raise_for_status()
+                response_book_url = requests.get(book_url)
+                response_book_url.raise_for_status()
 
-                check_for_redirect(response_url_book.history)
+                check_for_redirect(response_book_url.history)
 
-                book_page = parse_book_page(response_url_book)
+                book_page = parse_book_page(response_book_url)
 
                 if not args.skip_txt:
                     response_url_download_txt = get_response_url_download_txt()
@@ -131,17 +131,17 @@ if __name__ == '__main__':
                     book_page['book_path'] = ' '
 
                 if not args.skip_imgs:
-                    url_img = book_page.get('cover')
+                    img_url = book_page.get('cover')
                     folder = f'{args.dest_folder}/images'
-                    download_book_cover(url_img, folder)
+                    download_book_cover(img_url, folder)
                     book_page['img_path'] = f"{folder}/{book_page.get('img_path')}"
                 else:
                     book_page['img_path'] = ' '
 
-                folder_json = args.dest_folder
-                filename_json = f'{args.json_path}.json'
+                json_folder = args.dest_folder
+                json_filename = f'{args.json_path}.json'
 
-                write_json(book_page, folder_json, filename_json)
+                write_json(book_page, json_folder, json_filename)
 
                 logger.info(f'Book number {book_number} loaded')
             except requests.exceptions.HTTPError:
