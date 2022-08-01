@@ -62,7 +62,7 @@ def get_response_url_download_txt():
     return response_url_download_txt
 
 
-def get_response_url_books(number_page):
+def get_books_urls_answers_from_page(number_page):
     url_tululu = 'https://tululu.org/'
     url_fantasy_genre_books = f'https://tululu.org/l55/{number_page}'
     response_url_fantasy_genre_books = requests.get(url_fantasy_genre_books)
@@ -110,7 +110,7 @@ if __name__ == '__main__':
     download_stop_page = args.end_page
 
     for number_page in range(download_start_page, download_stop_page):
-        url_books = get_response_url_books(number_page)
+        url_books = get_books_urls_answers_from_page(number_page)
         for url_book in url_books:
             book_number = url_book.split('/')[-2].replace('b', '')
             try:
