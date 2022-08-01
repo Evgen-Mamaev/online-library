@@ -54,10 +54,8 @@ def parse_book_page(response):
     return book_page
 
 
-def get_response_url_download_txt():
-    url_download_txt = 'https://tululu.org/txt.php'
-    payload = {'id': book_number}
-    response_url_download_txt = requests.get(url_download_txt, params=payload)
+def get_response_url_download_txt(url, payload):
+    response_url_download_txt = requests.get(url, params=payload)
     response_url_download_txt.raise_for_status()
     return response_url_download_txt
 
@@ -122,7 +120,9 @@ if __name__ == '__main__':
                 book_page = parse_book_page(response_book_url)
 
                 if not args.skip_txt:
-                    response_url_download_txt = get_response_url_download_txt()
+                    url_download_txt = 'https://tululu.org/txt.php'
+                    payload = {'id': book_number}
+                    response_url_download_txt = get_response_url_download_txt(url_download_txt, payload)
                     filename = f"{book_number}. {book_page.get('title')}.txt"
                     folder = f'{args.dest_folder}/book'
                     saves_book_txt(response_url_download_txt, filename, folder)
