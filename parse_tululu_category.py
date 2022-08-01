@@ -79,10 +79,10 @@ def sets_page_loading_options():
     )
     parser.add_argument('--start_page', default='1', help='Старт', type=int)
     parser.add_argument('--end_page', default='702', help='Стоп', type=int)
-    parser.add_argument('--dest_folder', default='library', help='Укажите папку, для скаивания', type=str)
+    parser.add_argument('--dest_folder', default='library', help='Укажите папку, для скаивания')
     parser.add_argument('--skip_imgs', help='Скачать обложки?', action='store_true')
     parser.add_argument('--skip_txt', help='Скачать книги?', action='store_true')
-    parser.add_argument('--json_path', default='book_page', help='Укажите имя, для json', type=str)
+    parser.add_argument('--json_path', default='book_page', help='Укажите имя, для json')
     return parser
 
 
