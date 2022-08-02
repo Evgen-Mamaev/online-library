@@ -84,7 +84,7 @@ def sets_page_loading_options():
     return parser
 
 
-def write_json(book_page, folder, filename):
+def write_json(json_file, folder, filename):
     os.makedirs(folder, exist_ok=True)
     filename = sanitize_filename(filename)
     filepath = os.path.join(folder, filename)
@@ -93,7 +93,7 @@ def write_json(book_page, folder, filename):
             file = json.load(my_file)
     except FileNotFoundError:
         file = []
-    file.append(book_page)
+    file.append(json_file)
     with open(filepath, 'w', encoding='utf8') as my_file:
         json.dump(file, my_file, ensure_ascii=False, indent=2)
 
@@ -107,6 +107,7 @@ if __name__ == '__main__':
     download_start_page = args.start_page
     download_stop_page = args.end_page
 
+    json_file = []
     for page_number in range(download_start_page, download_stop_page):
         book_urls = get_book_urls_answers_from_page(page_number)
         for book_url in book_urls:
@@ -137,10 +138,7 @@ if __name__ == '__main__':
                     download_book_cover(img_url, folder)
                     book_page['img_path'] = os.path.join(folder, img_filename)
 
-                json_folder = args.dest_folder
-                json_filename = f'{args.json_path}.json'
-
-                write_json(book_page, json_folder, json_filename)
+                json_file.append(book_page)
 
                 logger.info(f'Book number {book_number} loaded')
             except requests.exceptions.HTTPError:
@@ -148,3 +146,7 @@ if __name__ == '__main__':
             except requests.ConnectionError:
                 logger.error('Connection Error')
                 time.sleep(10)
+
+    json_folder = args.dest_folder
+    json_filename = f'{args.json_path}.json'
+    write_json(json_file, json_folder, json_filename)
