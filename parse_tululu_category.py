@@ -91,7 +91,7 @@ def write_json(book_page, folder, filename):
     try:
         with open(filepath, 'r', encoding='utf8') as my_file:
             file = json.load(my_file)
-    except:
+    except FileNotFoundError:
         file = []
     file.append(book_page)
     with open(filepath, 'w', encoding='utf8') as my_file:
