@@ -119,6 +119,7 @@ if __name__ == '__main__':
 
                 book_page = parse_book_page(response_book_url)
 
+                book_page['book_path'] = ' '
                 if not args.skip_txt:
                     url_download_txt = 'https://tululu.org/txt.php'
                     payload = {'id': book_number}
@@ -127,16 +128,14 @@ if __name__ == '__main__':
                     folder = os.path.join(args.dest_folder, 'book')
                     saves_book_txt(response_url_download_txt, filename, folder)
                     book_page['book_path'] = os.path.join(folder, filename)
-                else:
-                    book_page['book_path'] = ' '
 
+                img_filename = book_page.get('img_path')
+                book_page['img_path'] = ' '
                 if not args.skip_imgs:
                     img_url = book_page.get('cover')
                     folder = os.path.join(args.dest_folder, 'images')
                     download_book_cover(img_url, folder)
-                    book_page['img_path'] = os.path.join(folder, book_page.get('img_path'))
-                else:
-                    book_page['img_path'] = ' '
+                    book_page['img_path'] = os.path.join(folder, img_filename)
 
                 json_folder = args.dest_folder
                 json_filename = f'{args.json_path}.json'
