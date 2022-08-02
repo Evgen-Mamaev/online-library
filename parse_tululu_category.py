@@ -124,17 +124,17 @@ if __name__ == '__main__':
                     payload = {'id': book_number}
                     response_url_download_txt = get_response_url_download_txt(url_download_txt, payload)
                     filename = f"{book_number}. {book_page.get('title')}.txt"
-                    folder = f'{args.dest_folder}/book'
+                    folder = os.path.join(args.dest_folder, 'book')
                     saves_book_txt(response_url_download_txt, filename, folder)
-                    book_page['book_path'] = f'{folder}/{filename}'
+                    book_page['book_path'] = os.path.join(folder, filename)
                 else:
                     book_page['book_path'] = ' '
 
                 if not args.skip_imgs:
                     img_url = book_page.get('cover')
-                    folder = f'{args.dest_folder}/images'
+                    folder = os.path.join(args.dest_folder, 'images')
                     download_book_cover(img_url, folder)
-                    book_page['img_path'] = f"{folder}/{book_page.get('img_path')}"
+                    book_page['img_path'] = os.path.join(folder, book_page.get('img_path'))
                 else:
                     book_page['img_path'] = ' '
 
