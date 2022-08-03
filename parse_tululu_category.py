@@ -12,11 +12,6 @@ from pathvalidate import sanitize_filename
 logger = logging.getLogger(__file__)
 
 
-def check_for_redirect(response_history):
-    if response_history:
-        raise requests.exceptions.HTTPError
-
-
 def saves_book_txt(response, filename, folder):
     os.makedirs(folder, exist_ok=True)
     filename = sanitize_filename(filename)
@@ -62,7 +57,7 @@ def get_response_url_download_txt(url, payload):
 
 def get_book_urls_answers_from_page(page_number):
     tululu_url = 'https://tululu.org/'
-    fantasy_genre_book_urls = f'https://tululu.org/l55/{page_number}'
+    fantasy_genre_book_urls = urljoin(tululu_url, f'/l55/{page_number}')
     fantasy_genre_book_response_urls = requests.get(fantasy_genre_book_urls)
     fantasy_genre_book_response_urls.raise_for_status()
     soup = BeautifulSoup(fantasy_genre_book_response_urls.text, 'lxml')
@@ -109,43 +104,45 @@ if __name__ == '__main__':
 
     json_file = []
     for page_number in range(download_start_page, download_stop_page):
-        book_urls = get_book_urls_answers_from_page(page_number)
-        for book_url in book_urls:
-            book_number = book_url.split('/')[-2].replace('b', '')
-            try:
-                response_book_url = requests.get(book_url)
-                response_book_url.raise_for_status()
+        try:
+            book_urls = get_book_urls_answers_from_page(page_number)
+            for book_url in book_urls:
+                try:
+                    book_number = book_url.split('/')[-2].replace('b', '')
 
-                check_for_redirect(response_book_url.history)
+                    response_book_url = requests.get(book_url)
+                    response_book_url.raise_for_status()
 
-                book_page = parse_book_page(response_book_url)
+                    book_page = parse_book_page(response_book_url)
 
-                book_page['book_path'] = ' '
-                if not args.skip_txt:
-                    url_download_txt = 'https://tululu.org/txt.php'
-                    payload = {'id': book_number}
-                    response_url_download_txt = get_response_url_download_txt(url_download_txt, payload)
-                    filename = f"{book_number}. {book_page.get('title')}.txt"
-                    folder = os.path.join(args.dest_folder, 'book')
-                    saves_book_txt(response_url_download_txt, filename, folder)
-                    book_page['book_path'] = os.path.join(folder, filename)
+                    book_page['book_path'] = ' '
+                    if not args.skip_txt:
+                        url_download_txt = 'https://tululu.org/txt.php'
+                        payload = {'id': book_number}
+                        response_url_download_txt = get_response_url_download_txt(url_download_txt, payload)
+                        filename = f"{book_number}. {book_page.get('title')}.txt"
+                        folder = os.path.join(args.dest_folder, 'book')
+                        saves_book_txt(response_url_download_txt, filename, folder)
+                        book_page['book_path'] = os.path.join(folder, filename)
 
-                img_filename = book_page.get('img_path')
-                book_page['img_path'] = ' '
-                if not args.skip_imgs:
-                    img_url = book_page.get('cover')
-                    folder = os.path.join(args.dest_folder, 'images')
-                    download_book_cover(img_url, folder)
-                    book_page['img_path'] = os.path.join(folder, img_filename)
+                    img_filename = book_page.get('img_path')
+                    book_page['img_path'] = ' '
+                    if not args.skip_imgs:
+                        img_url = book_page.get('cover')
+                        folder = os.path.join(args.dest_folder, 'images')
+                        download_book_cover(img_url, folder)
+                        book_page['img_path'] = os.path.join(folder, img_filename)
 
-                json_file.append(book_page)
+                    json_file.append(book_page)
 
-                logger.info(f'Book number {book_number} loaded')
-            except requests.exceptions.HTTPError:
-                logger.info(f'Book number {book_number} is missing')
-            except requests.ConnectionError:
-                logger.error('Connection Error')
-                time.sleep(10)
+                    logger.info(f'Book number {book_number} loaded')
+                except requests.exceptions.ConnectionError:
+                    logger.error('Connection Error')
+                    time.sleep(10)
+        except requests.exceptions.HTTPError:
+            logger.error('Page not found')
+        except requests.exceptions.ConnectionError:
+            logger.error('Connection Error')
 
     json_folder = args.dest_folder
     json_filename = f'{args.json_path}.json'
