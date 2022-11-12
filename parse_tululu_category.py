@@ -18,13 +18,13 @@ def check_for_redirect(response_history):
 
 
 def saves_book_txt(url, filename, folder, payload):
-    response_url_download_txt = requests.get(url, params=payload)
-    response_url_download_txt.raise_for_status()
+    response = requests.get(url, params=payload)
+    response.raise_for_status()
     os.makedirs(folder, exist_ok=True)
     filename = sanitize_filename(filename)
     filepath = os.path.join(folder, filename)
     with open(filepath, 'wb') as file:
-        file.write(response_url_download_txt.content)
+        file.write(response.content)
 
 
 def download_book_cover(img_url, folder):
@@ -58,10 +58,10 @@ def parse_book_page(response):
 
 def get_book_urls(page_number):
     tululu_url = 'https://tululu.org/'
-    fantasy_genre_book_urls = urljoin(tululu_url, f'/l55/{page_number}')
-    fantasy_genre_book_response_urls = requests.get(fantasy_genre_book_urls)
-    fantasy_genre_book_response_urls.raise_for_status()
-    soup = BeautifulSoup(fantasy_genre_book_response_urls.text, 'lxml')
+    fantasy_genre_books_url = urljoin(tululu_url, f'/l55/{page_number}')
+    response = requests.get(fantasy_genre_books_url)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, 'lxml')
     book_urls = [urljoin(tululu_url, book_number['href']) for book_number in soup.select('.bookimage a')]
     return book_urls
 
@@ -83,8 +83,8 @@ def write_json(json_file, folder, filename):
     os.makedirs(folder, exist_ok=True)
     filename = sanitize_filename(filename)
     filepath = os.path.join(folder, filename)
-    with open(filepath, 'a', encoding='utf8') as my_file:
-        json.dump(json_file, my_file, ensure_ascii=False, indent=2)
+    with open(filepath, 'a', encoding='utf8') as file:
+        json.dump(json_file, file, ensure_ascii=False, indent=2)
 
 
 if __name__ == '__main__':
@@ -131,6 +131,8 @@ if __name__ == '__main__':
                     book_pages.append(book_page)
 
                     logger.info(f'Book number {book_number} loaded')
+                except requests.exceptions.HTTPError:
+                    logger.error('Page not found')
                 except requests.exceptions.ConnectionError:
                     logger.error('Connection Error')
                     time.sleep(10)
