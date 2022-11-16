@@ -23,7 +23,7 @@
                 <div class="card-body">
                   <h5 class="card-title">{{book_page[0].get('title')}}</h5>
                   <p class="card-text">{{book_page[0].get('author')}}</p>
-                  <p class="card-text"><small class="text-muted">{{book_page[0].get('title')}}</small></p>
+                  <p><a href={{book_page[0].get('book_path')|urlencode}} target="_blank">Читать</a></p>
                 </div>
               </div>
             </div>
@@ -37,7 +37,7 @@
                 <div class="card-body">
                   <h5 class="card-title">{{book_page[-1].get('title')}}</h5>
                   <p class="card-text">{{book_page[-1].get('author')}}</p>
-                  <p class="card-text"><small class="text-muted">{{book_page[-1].get('title')}}</small></p>
+                  <p><a href={{book_page[-1].get('book_path')|urlencode}} target="_blank">Читать</a></p>
                 </div>
               </div>
             </div>
