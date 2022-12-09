@@ -11,7 +11,7 @@
     <title>Library</title>
   </head>
   <body>
-    <div class="mx-auto" style="width: 200px;">
+    <div class="container" style="margin-right:0px; margin-top:50px;">
       <nav aria-label="...">
         <ul class="pagination">
           {% if catalog_number == 1 %}
@@ -58,6 +58,9 @@
                 <div class="card-body">
                   <h5 class="card-title">{{book_page[0].get('title')}}</h5>
                   <p class="card-text">{{book_page[0].get('author')}}</p>
+                  {% for genre in book_page[0].get('genres') %}
+                    <h6 class="card-genres">{{genre}}</h6>
+                  {% endfor %}
                   <p><a href=/{{book_page[0].get('book_path')|urlencode}} target="_blank">Читать</a></p>
                 </div>
               </div>
@@ -72,6 +75,9 @@
                 <div class="card-body">
                   <h5 class="card-title">{{book_page[-1].get('title')}}</h5>
                   <p class="card-text">{{book_page[-1].get('author')}}</p>
+                  {% for genre in book_page[-1].get('genres') %}
+                    <h6 class="card-genres">{{genre}}</h6>
+                  {% endfor %}
                   <p><a href=/{{book_page[-1].get('book_path')|urlencode}} target="_blank">Читать</a></p>
                 </div>
               </div>
