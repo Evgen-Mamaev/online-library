@@ -66,7 +66,7 @@
                   {% for genre in book_page[0].get('genres') %}
                     <h6 class="card-genres">{{genre}}</h6>
                   {% endfor %}
-                  <p><a href=/{{book_page[0].get('book_path')|urlencode}} target="_blank">Читать</a></p>
+                  <p><a href=../{{book_page[0].get('book_path')|urlencode}} target="_blank">Читать</a></p>
                 </div>
               </div>
             </div>
@@ -74,7 +74,7 @@
           <div class="container mb-3" style="max-width: 540px;">
             <div class="row">
               <div class="col-md-4">
-                <img src=/{{book_page[-1].get('img_path')|urlencode}} class="card-img" alt="Обложка книги: {{book_page[-1].get('title')}}">
+                <img src=../{{book_page[-1].get('img_path')|urlencode}} class="card-img" alt="Обложка книги: {{book_page[-1].get('title')}}">
               </div>
               <div class="col-md-8">
                 <div class="card-body">
@@ -83,7 +83,7 @@
                   {% for genre in book_page[-1].get('genres') %}
                     <h6 class="card-genres">{{genre}}</h6>
                   {% endfor %}
-                  <p><a href=/{{book_page[-1].get('book_path')|urlencode}} target="_blank">Читать</a></p>
+                  <p><a href=../{{book_page[-1].get('book_path')|urlencode}} target="_blank">Читать</a></p>
                 </div>
               </div>
             </div>
